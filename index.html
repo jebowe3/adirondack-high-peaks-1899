@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adirondack High Peaks, 1899</title>
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/pmtiles@2.5.0/dist/index.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+
+    // assign an old paper background color to the map
+    document.getElementById("map").style.backgroundColor = "#eae7d9";
+
+    let protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles",protocol.tile);
+    //let URL = "OUTPUT.pmtiles";
+    const map = new maplibregl.Map({
+      container: 'map', // container id
+      style: {
+        version: 8,
+        sources: {
+          topo: {
+            type: "raster",
+            url: "pmtiles://pmtiles/marcy-map.pmtiles",
+            tileSize: 256,
+            minzoom: 0,
+            maxzoom: 13
+          },
+          terrainSource: {
+            type: "raster-dem",
+            url: "pmtiles://pmtiles/marcy-rgb.pmtiles",
+            tileSize: 256,
+            minzoom: 0,
+            maxzoom: 13
+          },
+          /*
+          hillshadeSource: {
+            type: "raster-dem",
+            url: "pmtiles://tiles/dem_rgb.pmtiles",
+            tileSize: 256,
+          },
+          */
+        },
+        layers: [
+          {
+            id: "topo",
+            type: "raster",
+            source: "topo",
+          },
+          /*
+          {
+            id: "hills",
+            type: "hillshade",
+            source: "hillshadeSource",
+            layout: { visibility: "visible" },
+            paint: { 
+                "hillshade-shadow-color": "rgb(192,194,201)",
+                "hillshade-accent-color": "rgb(192,194,201)",
+                "hillshade-highlight-color": "rgb(253,251,211)",
+                "hillshade-illumination-direction": 315,
+                "hillshade-exaggeration": 0.1,
+            },
+          },
+          */
+        ],
+        terrain: {
+          source: "terrainSource",
+          exaggeration: 0.002,
+        },
+      },
+      //center: [6.794106, 45.845545],
+      center: [-73.75, 44.25],
+      zoom: 9.5,
+      pitch: 0,
+      //zoom: 12.4,
+      //pitch: 85,
+      //bearing: 80,
+      maxPitch: 85,
+      minZoom: 8,
+      maxZoom: 13
+    });
+
+    map.addControl(
+      new maplibregl.ScaleControl({
+        maxWidth: 80,
+        unit: "metric",
+      })
+    );    
+
+
+   map.addControl(
+      new maplibregl.NavigationControl({
+        visualizePitch: true,
+        showZoom: true,
+        showCompass: true,
+      })
+    );
+
+    map.addControl(
+      new maplibregl.TerrainControl({
+        source: "terrainSource",
+        exaggeration: 0.002,
+      })
+    );
+
+
+  </script>
+</body>
+</html>
